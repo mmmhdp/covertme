@@ -1,3 +1,12 @@
+Use azcopy for installation:
+```
+https://www.thomasmaurer.ch/2019/05/how-to-install-azcopy-for-azure-storage/
+```
+Command:
+```
+azcopy copy https://azureopendatastorage.blob.core.windows.net/openstt/ru_open_stt_opus/archives/{prefix}.tar.gz .
+
+```
 List of ARCH_PREFIXES from RussianOpenTTS corpus 
 
     #Validation splits

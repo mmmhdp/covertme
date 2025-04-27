@@ -4,12 +4,15 @@ from huggingface_hub import login
 
 
 if __name__ == "__main__":
-    arch_prefix = "buriy_audiobooks_2_val"
+    arch_prefix = "asr_public_phone_calls_1"
+    # "public_youtube700",               # 75.0 GB WAV
+    # "tts_russian_addresses_rhvoice_4voices",  # 80.9 GB WAV
 
     dataset_url = (
         "https://azureopendatastorage.blob.core.windows.net/openstt/"
         f"ru_open_stt_opus/archives/{arch_prefix}.tar.gz"
     )
+
     manifest_url = (
         "https://azureopendatastorage.blob.core.windows.net/openstt/"
         f"ru_open_stt_opus/manifests/{arch_prefix}.csv"
@@ -39,7 +42,7 @@ if __name__ == "__main__":
         sampling_rate=16000
     )
 
-    HF_TOKEN = "PUT TOKEN HERE"
+    HF_TOKEN = "REPLACE_ME"
 
     login(token=HF_TOKEN)
 
