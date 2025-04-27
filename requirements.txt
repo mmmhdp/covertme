@@ -5,3 +5,4 @@ soundfile
 scikit-learn
 datasets
 ipython
+huggingface_hub

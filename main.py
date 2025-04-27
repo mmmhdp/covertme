@@ -1,8 +1,10 @@
-from convert_data import RussianOpenSTTPreparer
+from convert_data import RussianOpenSTTPreparer, cleanup_data
+from datasets import load_from_disk
+from huggingface_hub import login
 
 
 if __name__ == "__main__":
-    arch_prefix = "asr_public_phone_calls_1"
+    arch_prefix = "buriy_audiobooks_2_val"
 
     dataset_url = (
         "https://azureopendatastorage.blob.core.windows.net/openstt/"
@@ -21,10 +23,8 @@ if __name__ == "__main__":
         manifest_local=arch_prefix + ".csv"
     )
 
-    # Step 1: Download, extract, and re-root paths
     prep.prepare()
 
-    # Step 2: Split the dataset into train/val/test
     split_folder = f"{arch_prefix}_dataset"
     prep.split_dataset(
         target_base=split_folder,
@@ -33,9 +33,23 @@ if __name__ == "__main__":
         copy_files=True
     )
 
-    # Step 3: Convert splits to Hugging Face dataset and save to disk
     hf_dataset = prep.to_huggingface_dataset(
         split_dir=split_folder,
         save_path=f"{arch_prefix}_dataset",
         sampling_rate=16000
     )
+
+    HF_TOKEN = "PUT TOKEN HERE"
+
+    login(token=HF_TOKEN)
+
+    ds = load_from_disk(f"{arch_prefix}_dataset")
+
+    repo_id = f"Malecc/{arch_prefix}"
+
+    from huggingface_hub import create_repo
+    create_repo(repo_id, repo_type="dataset", exist_ok=True, token=HF_TOKEN)
+
+    ds.push_to_hub(repo_id=repo_id, token=HF_TOKEN)
+
+    cleanup_data(arch_prefix)

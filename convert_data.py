@@ -11,6 +11,10 @@ from sklearn.model_selection import train_test_split
 from pathlib import Path
 from datasets import load_dataset, Audio
 import subprocess
+import glob
+import os
+import shutil
+from typing import Optional
 
 
 class RussianOpenSTTPreparer:
@@ -258,3 +262,30 @@ class RussianOpenSTTPreparer:
         dataset.save_to_disk(save_path)
         print("Done.")
         return dataset
+
+
+def cleanup_data(prefix: str, base_dir: Optional[str] = None) -> None:
+    """
+    Delete all files and directories whose names start with `prefix`.
+
+    Args:
+        prefix: The filename/directory prefix to match (e.g. "prefix" will match "prefix_train", "prefix_tokenized_data", etc.).
+        base_dir: Optional directory in which to look (defaults to current working directory).
+    """
+    # build the glob pattern
+    if base_dir:
+        pattern = os.path.join(base_dir, f"{prefix}*")
+    else:
+        pattern = f"{prefix}*"
+
+    # find and delete matches
+    matches = glob.glob(pattern)
+    for path in matches:
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+            print(f"Deleted directory: {path!r}")
+        elif os.path.isfile(path):
+            os.remove(path)
+            print(f"Deleted file:      {path!r}")
+        else:
+            print(f"Skipped (not found or unknown type): {path!r}")
